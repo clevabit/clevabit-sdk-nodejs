@@ -2,10 +2,9 @@
   "compilerOptions": {
     "target": "es5",
     "module": "commonjs",
-    // "lib": [],                             /* Specify library files to be included in the compilation. */
     "declaration": true,
     "sourceMap": true,
-    "outDir": "./dist",
+    "outDir": "./lib",
     "downlevelIteration": true,
     "strict": true,
     "noImplicitAny": true,
