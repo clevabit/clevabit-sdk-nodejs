@@ -1,5 +1,5 @@
-import { decode as lorawan, Packet } from "../lorawan/decoder";
-import { ByteArray } from "../types/bytearray";
+import { decode as lorawan, Packet } from '../lorawan/decoder';
+import { ByteArray } from '../types/bytearray';
 
 /**
  * Representation of a decoded Rooclino packet
@@ -9,15 +9,15 @@ export interface Measurement {
    * Represents the Carbon Dioxide level in PPM (Parts Per
    * Million).
    */
-  carbonDioxide?: number
+  carbonDioxide?: number;
   /**
    * Represents the Relative Humidity in Percent.
    */
-  humidity?: number
+  humidity?: number;
   /**
    * Represents the Temperature in Degree Celsius.
    */
-  temperature?: number
+  temperature?: number;
 }
 
 /**
@@ -37,15 +37,15 @@ export function decode(payload: ByteArray | string): Measurement {
     temperature,
     humidity,
     carbonDioxide,
-  }
+  };
 }
 
 function findValue(transmitId: number, packet: Packet): number | undefined {
-  for (let value of packet.values) {
+  for (const value of packet.values) {
     if (!Array.isArray(value)) {
-      throw new TypeError(`illegal value found, expected array got ${typeof value}`)
+      throw new TypeError(`illegal value found, expected array got ${typeof value}`);
     }
-    if (value[0] && value[0] == transmitId) {
+    if (value[0] && value[0] === transmitId) {
       return value[1] as number;
     }
   }

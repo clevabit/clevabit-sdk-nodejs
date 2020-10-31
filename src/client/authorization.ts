@@ -1,7 +1,7 @@
-import { Reference } from "./reference";
+import { Reference } from './reference';
 
 export interface Authorization {
-  token: string
-  customer: Reference
-  account: Reference
+  token: string;
+  customer: Reference;
+  account: Reference;
 }

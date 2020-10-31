@@ -22,8 +22,9 @@
  * SOFTWARE.
  */
 
-import { ByteArray } from "../types/bytearray";
-import { UUID } from "../client/uuid";
+/* tslint:disable */
+import { ByteArray } from '../types/bytearray';
+import { UUID } from '../client/uuid';
 
 export type CBORTagger = (item: ByteArray, tag: number) => any;
 
@@ -38,8 +39,13 @@ function defaultTagger(item: ByteArray, tag: number): any {
   return item;
 }
 
-export function cborDecode<T extends any>(data: ByteArray, tagger?: (item: any, tag: number) => any, simpleValue?: any): T {
-  const buffer: ArrayBuffer = data instanceof Uint8Array && !(data instanceof Buffer) ? data.buffer : new Uint8Array(data).buffer;
+export function cborDecode<T extends any>(
+  data: ByteArray,
+  tagger?: (item: any, tag: number) => any,
+  simpleValue?: any,
+): T {
+  const buffer: ArrayBuffer =
+    data instanceof Uint8Array && !(data instanceof Buffer) ? data.buffer : new Uint8Array(data).buffer;
   return decode(
     buffer,
     (item: any, tag: number) => {
@@ -51,7 +57,7 @@ export function cborDecode<T extends any>(data: ByteArray, tagger?: (item: any, 
       }
       return defaultTagger(item, tag);
     },
-    simpleValue
+    simpleValue,
   ) as T;
 }
 
@@ -121,18 +127,18 @@ export function cborEncode(value: any): ByteArray {
 
   function writeTypeAndLength(type: number, length: number): void {
     if (length < 24) {
-      writeUint8(type << 5 | length);
+      writeUint8((type << 5) | length);
     } else if (length < 0x100) {
-      writeUint8(type << 5 | 24);
+      writeUint8((type << 5) | 24);
       writeUint8(length);
     } else if (length < 0x10000) {
-      writeUint8(type << 5 | 25);
+      writeUint8((type << 5) | 25);
       writeUint16(length);
     } else if (length < 0x100000000) {
-      writeUint8(type << 5 | 26);
+      writeUint8((type << 5) | 26);
       writeUint32(length);
     } else {
-      writeUint8(type << 5 | 27);
+      writeUint8((type << 5) | 27);
       writeUint64(length);
     }
   }
@@ -154,7 +160,7 @@ export function cborEncode(value: any): ByteArray {
     }
 
     switch (typeof value) {
-      case "number":
+      case 'number':
         if (Math.floor(value) === value) {
           if (0 <= value && value <= POW_2_53) {
             return writeTypeAndLength(0, value);
@@ -166,7 +172,7 @@ export function cborEncode(value: any): ByteArray {
         writeUint8(0xfb);
         return writeFloat64(value);
 
-      case "string":
+      case 'string':
         if (UUID.validUuid(value)) {
           const bytes = UUID.uuidToBytes(value);
           writeTypeAndLength(6, 37);
@@ -179,21 +185,21 @@ export function cborEncode(value: any): ByteArray {
           if (charCode < 0x80) {
             utf8data.push(charCode);
           } else if (charCode < 0x800) {
-            utf8data.push(0xc0 | charCode >> 6);
-            utf8data.push(0x80 | charCode & 0x3f);
+            utf8data.push(0xc0 | (charCode >> 6));
+            utf8data.push(0x80 | (charCode & 0x3f));
           } else if (charCode < 0xd800) {
-            utf8data.push(0xe0 | charCode >> 12);
-            utf8data.push(0x80 | (charCode >> 6) & 0x3f);
-            utf8data.push(0x80 | charCode & 0x3f);
+            utf8data.push(0xe0 | (charCode >> 12));
+            utf8data.push(0x80 | ((charCode >> 6) & 0x3f));
+            utf8data.push(0x80 | (charCode & 0x3f));
           } else {
             charCode = (charCode & 0x3ff) << 10;
             charCode |= value.charCodeAt(++i) & 0x3ff;
             charCode += 0x10000;
 
-            utf8data.push(0xf0 | charCode >> 18);
-            utf8data.push(0x80 | (charCode >> 12) & 0x3f);
-            utf8data.push(0x80 | (charCode >> 6) & 0x3f);
-            utf8data.push(0x80 | charCode & 0x3f);
+            utf8data.push(0xf0 | (charCode >> 18));
+            utf8data.push(0x80 | ((charCode >> 12) & 0x3f));
+            utf8data.push(0x80 | ((charCode >> 6) & 0x3f));
+            utf8data.push(0x80 | (charCode & 0x3f));
           }
         }
 
@@ -230,7 +236,7 @@ export function cborEncode(value: any): ByteArray {
 
   encodeItem(value);
 
-  if ("slice" in data) {
+  if ('slice' in data) {
     return new Uint8Array(data.slice(0, offset));
   }
 
@@ -246,10 +252,10 @@ function decode(data: ArrayBuffer, tagger: CBORTagger, simpleValue: any): any {
   const dataView = new DataView(data);
   let offset = 0;
 
-  if (typeof tagger !== "function") {
+  if (typeof tagger !== 'function') {
     tagger = (value) => value;
   }
-  if (typeof simpleValue !== "function") {
+  if (typeof simpleValue !== 'function') {
     simpleValue = () => undefined;
   }
 
@@ -279,7 +285,7 @@ function decode(data: ArrayBuffer, tagger: CBORTagger, simpleValue: any): any {
       return (sign ? -1 : 1) * fraction * POW_2_24;
     }
 
-    tempDataView.setUint32(0, sign << 16 | exponent << 13 | fraction << 13);
+    tempDataView.setUint32(0, (sign << 16) | (exponent << 13) | (fraction << 13));
     return tempDataView.getFloat32(0);
   }
 
@@ -334,7 +340,7 @@ function decode(data: ArrayBuffer, tagger: CBORTagger, simpleValue: any): any {
     if (additionalInformation === 31) {
       return -1;
     }
-    throw Error("Invalid length encoding");
+    throw Error('Invalid length encoding');
   }
 
   function readIndefiniteStringLength(majorType: number): number {
@@ -343,8 +349,8 @@ function decode(data: ArrayBuffer, tagger: CBORTagger, simpleValue: any): any {
       return -1;
     }
     const length = readLength(initialByte & 0x1f);
-    if (length < 0 || (initialByte >> 5) !== majorType) {
-      throw Error("Invalid indefinite length element");
+    if (length < 0 || initialByte >> 5 !== majorType) {
+      throw Error('Invalid indefinite length element');
     }
     return length;
   }
@@ -354,19 +360,14 @@ function decode(data: ArrayBuffer, tagger: CBORTagger, simpleValue: any): any {
       let value = readUint8();
       if (value & 0x80) {
         if (value < 0xe0) {
-          value = (value & 0x1f) << 6
-            | (readUint8() & 0x3f);
+          value = ((value & 0x1f) << 6) | (readUint8() & 0x3f);
           length -= 1;
         } else if (value < 0xf0) {
-          value = (value & 0x0f) << 12
-            | (readUint8() & 0x3f) << 6
-            | (readUint8() & 0x3f);
+          value = ((value & 0x0f) << 12) | ((readUint8() & 0x3f) << 6) | (readUint8() & 0x3f);
           length -= 2;
         } else {
-          value = (value & 0x0f) << 18
-            | (readUint8() & 0x3f) << 12
-            | (readUint8() & 0x3f) << 6
-            | (readUint8() & 0x3f);
+          value =
+            ((value & 0x0f) << 18) | ((readUint8() & 0x3f) << 12) | ((readUint8() & 0x3f) << 6) | (readUint8() & 0x3f);
           length -= 3;
         }
       }
@@ -401,7 +402,7 @@ function decode(data: ArrayBuffer, tagger: CBORTagger, simpleValue: any): any {
 
     length = readLength(additionalInformation);
     if (length < 0 && (majorType < 2 || 6 < majorType)) {
-      throw Error("Invalid length");
+      throw Error('Invalid length');
     }
 
     switch (majorType) {
@@ -452,7 +453,7 @@ function decode(data: ArrayBuffer, tagger: CBORTagger, simpleValue: any): any {
         return retArray;
       case 5:
         const retObject: any = {};
-        for (i = 0; i < length || length < 0 && !readBreak(); ++i) {
+        for (i = 0; i < length || (length < 0 && !readBreak()); ++i) {
           const key = decodeItem();
           retObject[key] = decodeItem();
         }
@@ -477,7 +478,7 @@ function decode(data: ArrayBuffer, tagger: CBORTagger, simpleValue: any): any {
 
   const ret = decodeItem();
   if (offset !== data.byteLength) {
-    throw Error("Remaining bytes");
+    throw Error('Remaining bytes');
   }
   return ret;
 }

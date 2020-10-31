@@ -15,7 +15,7 @@ export class UUID {
     return new UUID(value);
   }
 
-  public static fromByteArray(value:ByteArray): UUID {
+  public static fromByteArray(value: ByteArray): UUID {
     return new UUID(value);
   }
 
@@ -38,15 +38,16 @@ export class UUID {
     if (value.constructor === UUID) {
       return true;
     }
-    return (typeof value === 'string' && test.test(value));
+    return typeof value === 'string' && test.test(value);
   }
 
   public static uuidToBytes(value: string): ByteArray {
     let i = 0;
 
     const buf = new Uint8Array(16);
-    value.toLowerCase().replace(/[0-9a-f]{2}/g, oct => {
-      if (i < 16) { // Don't overflow!
+    value.toLowerCase().replace(/[0-9a-f]{2}/g, (oct) => {
+      if (i < 16) {
+        // Don't overflow!
         buf[i++] = hexToByte[oct];
       }
       return oct;
@@ -122,7 +123,7 @@ export class UUID {
   }
 
   public isEmpty(): boolean {
-    return Uint8Array.from(this.data).every(v => v === 0);
+    return Uint8Array.from(this.data).every((v) => v === 0);
   }
 
   public equals(other: UUID): boolean {
