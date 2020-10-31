@@ -1,4 +1,4 @@
-import { decode } from "../../../lib/lorawan/decoder";
+import { decode } from '../../../lib/lorawan/decoder';
 
 test('Test Packet Hex-String Decoding', () => {
   const payload = '848301186601820118198202182b820319019d';

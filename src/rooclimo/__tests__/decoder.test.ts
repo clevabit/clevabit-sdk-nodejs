@@ -1,4 +1,4 @@
-import { decode } from "../../../lib/rooclimo/decoder";
+import { decode } from '../../../lib/rooclimo/decoder';
 
 test('Test Rooclino Packet Hex-String Decoding', () => {
   const payload = '848301186601820118198202182b820319019d';
